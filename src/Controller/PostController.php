@@ -52,4 +52,28 @@ class PostController extends AbstractController
             return JsonResponse::fromJsonString($serialized);
         }
     }
+
+    #[Route('/get/posts', name: 'get_posts')]
+    public function getPosts(ManagerRegistry $doctrine, Request $request, DataFormat $df, SerializerInterface $serializer): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        $request = $df->transformJsonBody($request);
+
+        try {
+            $posts = $doctrine->getRepository(Post::class)->findAll();
+
+            $serialized = $serializer->serialize([
+                'data'      => $posts,
+                'status'    => true
+            ],'json');
+            return JsonResponse::fromJsonString($serialized);
+        } catch (\Exception $e) {
+            $serialized = $serializer->serialize([
+                'message'   => 'Erro no sistema.',
+                'status'    => false
+            ],'json');
+            return JsonResponse::fromJsonString($serialized);
+        }
+    }
 }

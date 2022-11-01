@@ -128,4 +128,22 @@ class AccountController extends AbstractController
             return JsonResponse::fromJsonString($serialized);
         }
     }
+
+    #[Route('/api/test/router', name: 'test_router')]
+    public function testRouter(ManagerRegistry $doctrine, Request $request, DataFormat $df, SerializerInterface $serializer): Response
+    {
+        try {
+            $serialized = $serializer->serialize([
+                'message' => 'Test Router.',
+                'status' => false
+            ],'json');
+            return JsonResponse::fromJsonString($serialized);
+        } catch (\Exception $e) {
+            $serialized = $serializer->serialize([
+                'message' => 'Erro no sistema.',
+                'status' => false
+            ],'json');
+            return JsonResponse::fromJsonString($serialized);
+        }
+    }
 }
