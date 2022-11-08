@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Post;
+use App\Entity\PostAttach;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -63,4 +64,52 @@ class PostRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    /**
+     * @return Post[] Returns an array of post objects
+     */
+    public function getPosts()
+    {
+        $qb = $this->createQueryBuilder('post');
+
+        $qb
+            ->select('
+                post.id AS id,
+                post.title AS title,
+                post.subtitle AS subtitle,
+                post.content AS content,
+                post.active AS active,
+                post.created_at AS createdAt,
+                post.updated_at AS updatedAt
+            ')
+            // ->innerJoin(PostAttach::class,'attach','WITH','post.id = attach.post_id')
+            // ->where('post.deleted = false')
+        ;
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @return Post[] Returns an array of post objects
+     */
+    public function getPost($post)
+    {
+        $qb = $this->createQueryBuilder('post');
+
+        $qb
+            ->select('
+                post.id AS id,
+                post.title AS title,
+                post.subtitle AS subtitle,
+                post.content AS content,
+                post.active AS active,
+                post.created_at AS createdAt,
+                post.updated_at AS updatedAt
+            ')
+            ->where('post.id = :post')
+            ->setParameter('post',$post)
+        ;
+
+        return $qb->getQuery()->getArrayResult();
+    }
 }
